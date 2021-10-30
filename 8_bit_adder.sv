@@ -91,4 +91,29 @@ class monitor;
     endtask 
 endclass //monitor
 
+//class scoreboard
+class scoreboard;
+    transaction t;
+    mailbox mbx;
+    virtual adder_8Bit_intf vif;
+    bit [8:0] temp;
 
+    function new(mailbox mbx);
+        this.mbx = mbx;
+    endfunction //new()
+
+    task run();
+        t = new();
+        forever begin
+            mbx.get(t);
+            temp = t.a + t.b;
+
+            if(temp == t.y) begin
+                $display("Test Passed!");
+            end
+            else begin
+                $display("Test Fail!");
+            end
+        end
+    endtask 
+endclass //scoreboard
