@@ -40,7 +40,31 @@ class generator;
     endtask 
 endclass //generator
 
+//Interface
 interface adder_8Bit_intf();
     logic [7:0] a,b;
     logic [8:0] y;   
 endinterface //adder_8Bit_intf
+
+//Driver class
+class driver;
+    transaction t;
+    mailbox mbx;
+    virtual adder_8Bit_intf vif;
+
+    function new(mailbox mbx);
+        this.mbx = mbx;
+    endfunction //new()
+
+    task run();
+        t = new();
+        forever begin
+            mbx.get(t);
+            vif.a = t.a;
+            vif.b = t.b;
+            $display(" [ DRV ] - Interface is OK.");
+            ->done;
+            #10;
+        end
+    endtask 
+endclass //driver
