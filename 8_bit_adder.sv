@@ -95,7 +95,6 @@ endclass //monitor
 class scoreboard;
     transaction t;
     mailbox mbx;
-    virtual adder_8Bit_intf vif;
     bit [8:0] temp;
 
     function new(mailbox mbx);
@@ -117,3 +116,41 @@ class scoreboard;
         end
     endtask 
 endclass //scoreboard
+
+//Environment class
+class Environment;
+    generator gen;
+    driver drv;
+    monitor mon;
+    scoreboard sco;
+    mailbox gdmbx, msmbx;
+    event gddone;
+
+    virtual adder_8Bit_intf vif;
+
+    function new(mailbox gdmbx, mailbox msmbx);
+        this.gdmbx = gdmbx;
+        this.msmbx = msmbx;
+
+        gen = new(gdmbx);
+        drv = new(gdmbx);
+
+        mon = new(msmbx);
+        sco = new(msmbx);
+    endfunction //new()
+
+    task run();
+
+        drv.vif = vif;
+        mon.vif = vif;
+
+        gen.done = gddone;
+        drv.done = gddone;
+
+        gen.run();
+        drv.run();
+        mon.run();
+        sco.run();
+
+    endtask 
+endclass //Environment
