@@ -68,3 +68,27 @@ class driver;
         end
     endtask 
 endclass //driver
+
+//monitor class
+class monitor;
+    transaction t;
+    mailbox mbx;
+    virtual adder_8Bit_intf vif;
+
+    function new(mailbox mbx);
+        this.mbx = mbx;
+    endfunction //new()
+
+    task run();
+        t = new();
+        forever begin
+            t.a = vif.a;
+            t.b = vif.b;
+            mbx.put(t);
+            $display(" [ MON ] - Monitor OK.");
+            #10;
+        end
+    endtask 
+endclass //monitor
+
+
