@@ -39,3 +39,8 @@ class generator;
         end
     endtask 
 endclass //generator
+
+interface adder_8Bit_intf();
+    logic [7:0] a,b;
+    logic [8:0] y;   
+endinterface //adder_8Bit_intf
